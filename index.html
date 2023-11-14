@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro Guess the Number Game</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    <style>
+        @keyframes jiggle {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            50% { transform: translateX(4px); }
+            75% { transform: translateX(-2px); }
+            100% { transform: translateX(2px); }
+        }
+
+        .jiggle {
+            animation: jiggle 0.5s ease-in-out;
+        }
+
+        body {
+            background-color: #ffcc00;
+            font-family: 'Press Start 2P', cursive;
+            color: #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .bg-white {
+            background-color: #ffffff;
+            border: 1px solid #1a1a1a;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .bg-blue-500, .hover\:bg-blue-600 {
+            background-color: #005cbf;
+        }
+
+        .text-white {
+            color: #ffffff;
+        }
+
+        .focus\:border-blue-500:focus {
+            border-color: #005cbf !important;
+        }
+
+        .number-button {
+            background-color: #005cbf;
+            color: #ffffff;
+            border: 2px solid #ffffff;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: 'Press Start 2P', cursive;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .number-button:hover {
+            background-color: #003366;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="bg-white rounded-md shadow-md">
+        <h1 class="text-3xl font-semibold mb-6">GUESS THE NUMBER GAME!</h1>
+        <p class="mb-4">Choose a number between 1 and 10:</p>
+
+        <div class="flex flex-wrap justify-center">
+            <button onclick="chooseNumber(1)" class="number-button">1</button>
+            <button onclick="chooseNumber(2)" class="number-button">2</button>
+            <button onclick="chooseNumber(3)" class="number-button">3</button>
+            <button onclick="chooseNumber(4)" class="number-button">4</button>
+            <button onclick="chooseNumber(5)" class="number-button">5</button>
+            <button onclick="chooseNumber(6)" class="number-button">6</button>
+            <button onclick="chooseNumber(7)" class="number-button">7</button>
+            <button onclick="chooseNumber(8)" class="number-button">8</button>
+            <button onclick="chooseNumber(9)" class="number-button">9</button>
+            <button onclick="chooseNumber(10)" class="number-button">10</button>
+        </div>
+
+        <div id="output" class="mt-6 text-xl"></div>
+        <p class="mt-4 text-red-600">Lives: <span id="lives">5</span></p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        let secretNumber = generateRandomNumber();
+        let attempts = 0;
+        let lives = 5;
+
+        function chooseNumber(selectedNumber) {
+            attempts++;
+
+            const output = document.getElementById('output');
+            const livesSpan = document.getElementById('lives');
+
+            if (selectedNumber === secretNumber) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Congratulations!',
+                    text: `You guessed the correct number in ${attempts} attempts.`,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Play Again'
+                }).then(result => result.isConfirmed && resetGame());
+            } else {
+                output.textContent = 'Incorrect guess. Try again!';
+                output.classList.add('jiggle');
+                setTimeout(() => output.classList.remove('jiggle'), 500);
+
+                lives--;
+                livesSpan.textContent = lives;
+
+                if (lives === 0) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Game Over',
+                        text: `You ran out of lives. The correct number was ${secretNumber}`,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Try Again'
+                    }).then(result => result.isConfirmed && resetGame());
+                }
+            }
+        }
+
+        function resetGame() {
+            attempts = 0;
+            lives = 5;
+            document.getElementById('lives').textContent = lives;
+            secretNumber = generateRandomNumber();
+            document.getElementById('output').textContent = '';
+        }
+
+        function generateRandomNumber() {
+            return Math.floor(Math.random() * 10) + 1;
+        }
+    </script>
+</body>
+</html>
